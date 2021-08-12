@@ -22,12 +22,13 @@ def get_data_from_directory(directory):
     - numpy array of spectral properties
     '''
 
+
     phys_prop_joint = np.array([])
     spectral_prop_joint = np.array([])
 
     files_list = listdir(directory)
     for data_file in files_list:
-        data = h5py.File(directory + '\\' + str(data_file), 'r')
+        data = h5py.File(directory + '/' + str(data_file), 'r')
 
         physical_prop, spectral_prop, _ = get_properties_from_file(data)
 
@@ -148,7 +149,7 @@ def get_wavelength(start, stop, step, pooling_width = 1):
 
 
 def load_split_pool(train_size, val_size, pooling_width, scale = True, take_log = False,
-                    normalize_by_wflux = False, normalize_by_sflux = False):
+                    normalize_by_wflux = False, normalize_by_sflux = False, directory_list = None):
     '''Load the spectral and physical data, apply the train/val/test split and pooling of a given width.
     For explanatory data (x), these are loaded, split, pooled, standardised to have zero mean and unit variance in this
     order.
@@ -160,7 +161,12 @@ def load_split_pool(train_size, val_size, pooling_width, scale = True, take_log 
 
     Also note that the dataset is shuffled randomly with a fixe random state to allow reporducibility.'''
 
-    directory_list = ['Complete_Spectral_Data\Training_Data', 'Complete_Spectral_Data\Test_Data']
+    if directory_list == None:
+        directory_list = ['Complete_Spectral_Data\Training_Data', 'Complete_Spectral_Data\Test_Data']
+
+    else:
+        directory_list = directory_list
+
     data_all = get_data_from_directory_list(directory_list)
 
     spectral_data = data_all["spectral_properties"]
@@ -271,3 +277,4 @@ def load_split_pool(train_size, val_size, pooling_width, scale = True, take_log 
     data_dict["wavelengths"] = wavelengths
 
     return (data_dict)
+
